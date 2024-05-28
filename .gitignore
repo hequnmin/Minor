@@ -1,0 +1,18 @@
+# git ignore file
+
+/.vs
+/Minor/bin
+/Minor/obj
+/Minor/.vs
+
+/Minor.Lib/bin
+/Minor.Lib/obj
+/Minor.Lib/.vs
+
+/TreeViewPro/bin
+/TreeViewPro/obj
+/TreeViewPro/.vs
+
+
+
+
