@@ -48,6 +48,7 @@ namespace Minor
             btnRun.Click += _Run;
 
             nexus.OnCommandComplete += Nexus_OnCommandComplete;
+            nexus.OnExecuteComplete += Nexus_OnExecuteComplete;
 
             tvwTesting.AfterSelect += _AfterSelectNode;
         }
@@ -83,15 +84,17 @@ namespace Minor
         {
             if (tvwTesting.Nodes.Count >= 1)
             {
+                btnOpen.Enabled = false;
+                btnRun.Enabled = false;
 
                 Task.Run(() =>
                 {
                     Connection cn = new Connection
                     {
-                        Channel = 6,
-                        ConnectionID = 6,
+                        Channel = 12,
+                        ConnectionID = 12,
                         TCPServerIP = "127.0.0.1",
-                        TCPServerPort = 10006,
+                        TCPServerPort = 10012,
                         IsActive = true,
                     };
 
@@ -219,6 +222,17 @@ namespace Minor
                         treeIO.StateImageKey = e.Command.Result ? "fatcow16_tick" : "fatcow16_tick_red";
                     }
                 }
+            }
+        }
+
+        private void Nexus_OnExecuteComplete(object sender, Nexus.ExecuteEventArgs e)
+        {
+            btnOpen.Enabled = true;
+            btnRun.Enabled = true;
+
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message, "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
