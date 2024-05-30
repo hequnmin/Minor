@@ -28,8 +28,8 @@ namespace Minor.Lib
         public const int WM_PRINTCLIENT = 0x0318;
         public const int PRF_CLIENT = 0x00000004;
 
-        private bool _arrowKeyUp = false;
-        private bool _arrowKeyDown = false;
+        //private bool _arrowKeyUp = false;
+        //private bool _arrowKeyDown = false;
 
         private readonly string _base64Collapse = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALtJREFUeNpi/P//PwMlgImBQjCIDWhsbPzQ0NDwn5GRkQGGSTLg379//AkJiQxVVVX/yXIBKHYOHTnKkJGZxVBZWYnTEBZ8pvPz8zOcPHWaoaS0jIGZmRlkCCPRBoBcwMfPx/D7zx+Gv3//kBcLggICDCqKigz9fX0MLS0tJiR5gYmJieHjxw8Mq1euYGhvbwdpPkuSC378+HFo/969DG1tbTg1gwAjrrwAjHcVUDgia8amlnHoZyaAAAMAUZxDgEaeCkwAAAAASUVORK5CYII=";
         private readonly string _base64Expand = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAL1JREFUeNpi/P//PwMlgImBQjAMDGBBF8jOzj7+588fi79//zLAApiRkZGBmZmZgYWF5cTUqVMt8RoA1GhRUlrGwMXFA2KDxUCav337wtDb022Brp4RPRqBthknJyWdiY6NY/jy7TtYjIeLk2Hp4kUMc+fNMwGqP4uiAWQAMoYC4+Tk5P9r160HYxAbJIZNPQuOsDk7d+5cE6Cfz4A4N27ciAWJYVOIzQvIXGMofR2Iv8FcgNeA0aRMOgAIMADo32ORwCadLgAAAABJRU5ErkJggg==";
@@ -47,9 +47,9 @@ namespace Minor.Lib
 
         public TreeViewPro()
         {
-#if DEBUG
-            _showGrid = true;
-#endif
+//#if DEBUG
+//            _showGrid = true;
+//#endif
 
             _imageCollapse = LoadImage(_base64Collapse);
             _imageExpand = LoadImage(_base64Expand);
@@ -95,16 +95,15 @@ namespace Minor.Lib
             Rectangle bounds = e.Bounds;
             Graphics g = e.Graphics;
             
-            if ((e.State & TreeNodeStates.Hot) != 0)
-            {
-                Console.WriteLine($"{node.Text} Hot");
-            }
+            //if ((e.State & TreeNodeStates.Hot) != 0)
+            //{
+            //    Console.WriteLine($"{node.Text} Hot");
+            //}
 
-            if ((e.State & TreeNodeStates.Selected) != 0)
-            {
-                Console.WriteLine($"{node.Text} Selected");
-            }
-
+            //if ((e.State & TreeNodeStates.Selected) != 0)
+            //{
+            //    Console.WriteLine($"{node.Text} Selected");
+            //}
 
             if (_showGrid) g.DrawRectangle(new Pen(Color.Red), bounds);
 
@@ -185,9 +184,10 @@ namespace Minor.Lib
             #region 3   绘画节点图标===================================================================
             //图标矩形
             Image image = null;
-            if (this.ImageList != null && this.ImageList.Images.Count > 0)
+            if (this.ImageList != null && this.ImageList.Images.Count > 0 && !string.IsNullOrEmpty(e.Node.ImageKey))
             {
-                image = this.ImageList.Images.ContainsKey(e.Node.ImageKey) ? this.ImageList.Images[e.Node.ImageKey] : this.ImageList.Images[0];
+                //image = this.ImageList.Images.ContainsKey(e.Node.ImageKey) ? this.ImageList.Images[e.Node.ImageKey] : this.ImageList.Images[0];
+                image = this.ImageList.Images.ContainsKey(e.Node.ImageKey) ? this.ImageList.Images[e.Node.ImageKey] : null;
             }
 
             Rectangle boundsImage = new Rectangle(
