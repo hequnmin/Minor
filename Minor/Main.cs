@@ -49,6 +49,7 @@ namespace Minor
 
             nexus.OnCommandComplete += Nexus_OnCommandComplete;
             nexus.OnExecuteComplete += Nexus_OnExecuteComplete;
+            nexus.OnVariableChanged += Nexus_OnVariableChanged;
 
             tvwTesting.AfterSelect += _AfterSelectNode;
         }
@@ -87,14 +88,16 @@ namespace Minor
                 btnOpen.Enabled = false;
                 btnRun.Enabled = false;
 
+                WholeTreeNodeSetting(tvwTesting.Nodes);
+
                 Task.Run(() =>
                 {
                     Connection cn = new Connection
                     {
-                        Channel = 12,
-                        ConnectionID = 12,
+                        Channel = 6,
+                        ConnectionID = 6,
                         TCPServerIP = "127.0.0.1",
-                        TCPServerPort = 10012,
+                        TCPServerPort = 10006,
                         IsActive = true,
                     };
 
@@ -106,6 +109,18 @@ namespace Minor
                 });
             }
 
+        }
+
+        private void WholeTreeNodeSetting(TreeNodeCollection tree)
+        {
+            foreach (TreeNode node in tree)
+            {
+                node.StateImageKey = string.Empty;
+                if (node.Nodes.Count > 0)
+                {
+                    WholeTreeNodeSetting(node.Nodes);
+                }
+            }
         }
 
         private void ImagesLoad()
@@ -208,10 +223,8 @@ namespace Minor
 
         private void Nexus_OnCommandComplete(object sender, Nexus.CommandEventArgs e)
         {
-            TreeNode treeCmd = tvwTesting.Nodes[0]
-                ?.Nodes["Nodes"]
-                ?.Nodes[e.Node.GUID]
-                ?.Nodes[e.Command.GUID];
+            TreeNode treeNode = tvwTesting.Nodes[0]?.Nodes["Nodes"]?.Nodes[e.Node.GUID];
+            TreeNode treeCmd = treeNode?.Nodes[e.Command.GUID];
             if (treeCmd != null)
             {
                 treeCmd.StateImageKey = e.Command.Result ? "fatcow16_tick" : "fatcow16_tick_red";
@@ -219,9 +232,21 @@ namespace Minor
                 {
                     if (treeIO.Tag is CommandIO io)
                     {
-                        treeIO.StateImageKey = e.Command.Result ? "fatcow16_tick" : "fatcow16_tick_red";
+                        treeIO.StateImageKey = io.Result ? "fatcow16_tick" : "fatcow16_tick_red";
                     }
                 }
+                if (e.Node.Commands.All(c => c.Ran))
+                {
+                    if (e.Node.Commands.Any(c => !c.Result))
+                    {
+                        treeNode.StateImageKey = "fatcow16_tick_red";
+                    }
+                    else
+                    {
+                        treeNode.StateImageKey = "fatcow16_tick";
+                    }
+                }
+                
             }
         }
 
@@ -233,6 +258,20 @@ namespace Minor
             if (e.Error != null)
             {
                 MessageBox.Show(e.Error.Message, "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Nexus_OnVariableChanged(object sender, Nexus.VariableEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.Key))
+            {
+                TreeNode treeVar = tvwTesting.Nodes[0]
+                    ?.Nodes["Variables"]
+                    ?.Nodes[e.Key];
+                if (treeVar != null)
+                {
+                    treeVar.StateImageKey = "fatcow16_tick";
+                }
             }
         }
 
